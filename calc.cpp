@@ -487,14 +487,9 @@ void parser_t::parse()
 void parser_t::List(){
 	parsetree.push(NT_List);
 
-	if (scanner.next_token() != T_period) {
-        Expr();
-        eat_token(T_period);
-        ListPrime();
-    } else {
-        parsetree.drawepsilon();
-    }
-
+	Expr(); // Ensure there's at least one expression
+    eat_token(T_period); // Ensure the expression is followed by a period
+    ListPrime();
 
 	parsetree.pop();
 }
