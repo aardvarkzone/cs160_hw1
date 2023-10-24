@@ -437,7 +437,7 @@ void parser_t::syntax_error(nonterm_type nt)
 		token_to_string( scanner.next_token()),
 		nonterm_to_string(nt),
 		scanner.get_line() ); 
-	exit(1); 
+	exit(2); 
 }
 
 //One the recursive decent parser is set up, you simply call parse()
@@ -583,6 +583,9 @@ void parser_t::Factor(){
 		// 	Expr();
 		// 	eat_token(T_bar);
 		// 	break;
+		case T_closeparen:
+			syntax_error(NT_Factor);
+			break;
 		case T_openparen:
             eat_token(T_openparen);
             Expr();
