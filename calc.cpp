@@ -421,7 +421,7 @@ class parser_t {
 	void Term();
 	void TermPrime();
 	void Factor(); 
-	void Base();
+	//void Base();
   public:	
 	void parse();
 };
@@ -505,7 +505,6 @@ void parser_t::List(){
         parsetree.drawepsilon();
     }
 
-
 	parsetree.pop();
 }
 
@@ -519,6 +518,7 @@ void parser_t::ListPrime(){
     } else {
         parsetree.drawepsilon();
     }
+		printf("\nparsed\n");
 
 	parsetree.pop();
 }
@@ -579,10 +579,19 @@ void parser_t::Factor(){
 	parsetree.push(NT_Factor); 
 
 	switch (scanner.next_token()) {
-		case T_num: 
-		case T_minus: 
+		// case T_num: 
+		// 	Base();
+		// 	break;
+		// case T_minus: 
+		// 	eat_token(T_minus);
+		// 	Base(); 
+		// 	break;
+		case T_num:
+			eat_token(T_num);
+			break;
+		case T_minus:
 			eat_token(T_minus);
-			Base(); 
+			Factor();
 			break;
 		case T_closeparen:
 			syntax_error(NT_Factor);
@@ -590,12 +599,18 @@ void parser_t::Factor(){
 		case T_openparen:
             eat_token(T_openparen);
             Expr();
-            eat_token(T_closeparen);
+			if (scanner.next_token() == T_closeparen) {
+                eat_token(T_closeparen);
+            } else { syntax_error(NT_Factor); } 
+			
             break;
         case T_bar: 
             eat_token(T_bar);
             Expr();
-            eat_token(T_bar);
+			if (scanner.next_token() == T_bar) {
+                eat_token(T_bar);
+            } else { syntax_error(NT_Factor); } 
+			
             break;
 		default: 
 			syntax_error(NT_Factor);
@@ -605,21 +620,34 @@ void parser_t::Factor(){
 	parsetree.pop();
 }
 
-void parser_t::Base(){
-	parsetree.push(NT_Base);
+// void parser_t::Base(){
+// 	parsetree.push(NT_Base);
 	
-	if (scanner.next_token() == T_minus) {
-		eat_token(T_minus);
-		Base();
-	} else if (scanner.next_token() == T_num) {
-		eat_token(T_num);
-	} else {
-		syntax_error(NT_Base);
-	}
+// 	if (scanner.next_token() == T_minus) {
+// 		eat_token(T_minus);
+// 		Base();
+// 	} else if (scanner.next_token() == T_num) {
+// 		eat_token(T_num);
+// 	} else {
+// 		syntax_error(NT_Base);
+// 	}
 	
 
-	parsetree.pop();
-}
+// 	parsetree.pop();
+// }
+
+// void parser_t::Base(){
+// 	parsetree.push(NT_Base);
+	
+// 	if (scanner.next_token() == T_num) {
+// 		eat_token(T_num);
+// 	} else {
+// 		syntax_error(NT_Base);
+// 	}
+	
+
+// 	parsetree.pop();
+// }
 
 
 /*** Main ***********************************************/
