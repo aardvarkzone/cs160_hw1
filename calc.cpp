@@ -184,13 +184,23 @@ void scanner_t::tokenize() {
             break;
         default:
             // Handle numbers
-            if (isdigit(current_character)) {
+            // if (isdigit(current_character)) {
+            //     current_token = T_num;
+            //     while (isdigit(current_character)) {
+            //         read_character();
+            //     }
+            // } else {
+            //     scan_error(current_character);
+            // }
+			if (isdigit(current_character)) {
                 current_token = T_num;
                 while (isdigit(current_character)) {
                     read_character();
                 }
-            } else {
+            } else if (isprint(current_character)) { 
                 scan_error(current_character);
+            } else {
+                read_character();
             }
             break;
     }
@@ -484,34 +494,20 @@ void parser_t::parse()
 // }
 
 //WRITEME: you will need to put the rest of the procedures here
-// void parser_t::List(){
-// 	parsetree.push(NT_List);
-
-// 	if (scanner.next_token() != T_period) {
-//         Expr();
-//         eat_token(T_period);
-//         ListPrime();
-//     } else {
-//         parsetree.drawepsilon();
-//     }
-
-
-// 	parsetree.pop();
-// }
-
 void parser_t::List(){
 	parsetree.push(NT_List);
 
-    Expr();
-    if (scanner.next_token() != T_period) {
-        syntax_error(NT_List);
+	if (scanner.next_token() != T_period) {
+        Expr();
+        eat_token(T_period);
+        ListPrime();
+    } else {
+        parsetree.drawepsilon();
     }
-    eat_token(T_period);
-    ListPrime();
+
 
 	parsetree.pop();
 }
-
 
 void parser_t::ListPrime(){
 	parsetree.push(NT_ListPrime);
@@ -527,26 +523,10 @@ void parser_t::ListPrime(){
 	parsetree.pop();
 }
 
-// void parser_t::Expr(){
-// 	parsetree.push(NT_Expr);
-
-// 	Term(); 
-// 	ExprPrime();
-
-// 	parsetree.pop();
-// }
-
 void parser_t::Expr(){
 	parsetree.push(NT_Expr);
 
 	Term(); 
-	if (scanner.next_token() != T_plus && 
-		scanner.next_token() != T_minus && 
-		scanner.next_token() != T_period && 
-		scanner.next_token() != T_closeparen && 
-		scanner.next_token() != T_bar) {
-		syntax_error(NT_Expr);
-	}
 	ExprPrime();
 
 	parsetree.pop();
@@ -573,32 +553,14 @@ void parser_t::ExprPrime(){
 	parsetree.pop();
 }
 
-// void parser_t::Term(){
-// 	parsetree.push(NT_Term);
-
-// 	Factor(); 
-// 	TermPrime(); 
-
-// 	parsetree.pop();
-// }
-
 void parser_t::Term(){
-    parsetree.push(NT_Term);
+	parsetree.push(NT_Term);
 
-    Factor(); 
-    if (scanner.next_token() != T_times && 
-		scanner.next_token() != T_plus && 
-		scanner.next_token() != T_minus && 
-		scanner.next_token() != T_period && 
-		scanner.next_token() != T_closeparen && 
-		scanner.next_token() != T_bar) {
-        syntax_error(NT_Term);
-    }
-    TermPrime(); 
+	Factor(); 
+	TermPrime(); 
 
-    parsetree.pop();
+	parsetree.pop();
 }
-
 
 void parser_t::TermPrime(){
 	parsetree.push(NT_TermPrime);
@@ -619,7 +581,6 @@ void parser_t::Factor(){
 	switch (scanner.next_token()) {
 		case T_num: 
 		case T_minus: 
-			eat_token(T_minus);
 			Base(); 
 			break;
 		// case T_openparen:
