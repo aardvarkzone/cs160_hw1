@@ -487,9 +487,14 @@ void parser_t::parse()
 void parser_t::List(){
 	parsetree.push(NT_List);
 
-	Expr(); // Ensure there's at least one expression
-    eat_token(T_period); // Ensure the expression is followed by a period
-    ListPrime();
+	if (scanner.next_token() != T_period) {
+        Expr();
+        eat_token(T_period);
+        ListPrime();
+    } else {
+        parsetree.drawepsilon();
+    }
+
 
 	parsetree.pop();
 }
@@ -568,27 +573,32 @@ void parser_t::Factor(){
 		case T_minus: 
 			Base(); 
 			break;
+		// case T_openparen:
+		// 	eat_token(T_openparen);
+		// 	Expr();
+		// 	eat_token(T_closeparen);
+		// 	break;
+		// case T_bar: 
+		// 	eat_token(T_bar);
+		// 	Expr();
+		// 	eat_token(T_bar);
+		// 	break;
 		case T_openparen:
-			eat_token(T_openparen);
-			if (scanner.next_token() == T_closeparen) {
-                syntax_error(NT_Factor); 
+            eat_token(T_openparen);
+            Expr();
+            if (scanner.next_token() != T_closeparen) {
+                syntax_error(NT_Factor);
             }
-			Expr();
-			if (scanner.next_token() != T_closeparen) {
-                syntax_error(NT_Factor); 
-            }
-            eat_token(T_closeparen);			
-			break;
-		case T_bar: 
-			eat_token(T_bar);
-			if (scanner.next_token() == T_bar) {
-                syntax_error(NT_Factor); 
-            }
+            eat_token(T_closeparen);
+            break;
+        case T_bar: 
+            eat_token(T_bar);
             Expr();
             if (scanner.next_token() != T_bar) {
-                syntax_error(NT_Factor); 
+                syntax_error(NT_Factor);
             }
             eat_token(T_bar);
+            break;
 		default: 
 			syntax_error(NT_Factor);
 			break;
