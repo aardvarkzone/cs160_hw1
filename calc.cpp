@@ -590,17 +590,11 @@ void parser_t::Factor(){
 		case T_openparen:
             eat_token(T_openparen);
             Expr();
-            if (scanner.next_token() != T_closeparen) {
-                syntax_error(NT_Factor);
-            }
             eat_token(T_closeparen);
             break;
         case T_bar: 
             eat_token(T_bar);
             Expr();
-            if (scanner.next_token() != T_bar) {
-                syntax_error(NT_Factor);
-            }
             eat_token(T_bar);
             break;
 		default: 
