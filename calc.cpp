@@ -570,14 +570,25 @@ void parser_t::Factor(){
 			break;
 		case T_openparen:
 			eat_token(T_openparen);
+			if (scanner.next_token() == T_closeparen) {
+                syntax_error(NT_Factor); 
+            }
 			Expr();
-			eat_token(T_closeparen);
+			if (scanner.next_token() != T_closeparen) {
+                syntax_error(NT_Factor); 
+            }
+            eat_token(T_closeparen);			
 			break;
 		case T_bar: 
 			eat_token(T_bar);
-			Expr();
-			eat_token(T_bar);
-			break;
+			if (scanner.next_token() == T_bar) {
+                syntax_error(NT_Factor); 
+            }
+            Expr();
+            if (scanner.next_token() != T_bar) {
+                syntax_error(NT_Factor); 
+            }
+            eat_token(T_bar);
 		default: 
 			syntax_error(NT_Factor);
 			break;
