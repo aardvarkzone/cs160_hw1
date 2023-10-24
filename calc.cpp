@@ -538,7 +538,9 @@ void parser_t::ExprPrime(){
 	switch(scanner.next_token()){
 		case T_plus: 
 			eat_token(T_plus); 
-			if (scanner.next_token() == T_plus || scanner.next_token() == T_minus || scanner.next_token() == T_times) {
+			if (scanner.next_token() == T_plus || 
+				scanner.next_token() == T_minus || 
+				scanner.next_token() == T_times) {
 				syntax_error(NT_ExprPrime);
 			}
 			Term(); 
@@ -546,7 +548,9 @@ void parser_t::ExprPrime(){
 			break; 
 		case T_minus: 
 			eat_token(T_minus);
-			if (scanner.next_token() == T_plus || scanner.next_token() == T_minus || scanner.next_token() == T_times) {
+			if (scanner.next_token() == T_plus || 
+				scanner.next_token() == T_minus || 
+				scanner.next_token() == T_times) {
 				syntax_error(NT_ExprPrime);
 			}
 			Term(); 
@@ -573,7 +577,9 @@ void parser_t::TermPrime(){
 
 	if (scanner.next_token() == T_times) {
 		eat_token(T_times);
-		if (scanner.next_token() == T_plus || scanner.next_token() == T_minus || scanner.next_token() == T_times) {
+		if (scanner.next_token() == T_plus || 
+			scanner.next_token() == T_minus || 
+			scanner.next_token() == T_times) {
 			syntax_error(NT_TermPrime);
 		}
 		Factor();
@@ -590,6 +596,7 @@ void parser_t::Factor(){
 	switch (scanner.next_token()) {
 		case T_num: 
 		case T_minus: 
+			eat_token(T_minus);
 			Base(); 
 			break;
 		case T_closeparen:
