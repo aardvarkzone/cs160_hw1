@@ -497,14 +497,21 @@ void parser_t::parse()
 void parser_t::List(){
 	parsetree.push(NT_List);
 
-	if (scanner.next_token() != T_period) {
-        Expr();
-        eat_token(T_period);
-        ListPrime();
-    } else {
-        parsetree.drawepsilon();
-    }
-
+	// if (scanner.next_token() != T_period) {
+    //     Expr();
+    //     eat_token(T_period);
+    //     ListPrime();
+    // } else {
+    //     parsetree.drawepsilon();
+    // }
+	Expr();
+	if (scanner.next_token() == T_period) {
+		eat_token(T_period);
+	} else {
+		syntax_error(NT_List);
+	}
+	ListPrime();
+	//eat_token(T_period);
 	parsetree.pop();
 }
 
@@ -513,12 +520,21 @@ void parser_t::ListPrime(){
 
 	if (scanner.next_token() != T_eof) {
         Expr();
-        eat_token(T_period);
+        if (scanner.next_token() == T_period) {
+			eat_token(T_period);
+		} else {
+			syntax_error(NT_ListPrime);
+		}
         ListPrime();
-    } else {
+    } 	// if (scanner.next_token() != T_eof) {
+    //     Expr();
+    //     eat_token(T_period);
+    //     ListPrime();
+    // } 
+	else {
         parsetree.drawepsilon();
     }
-		printf("\nparsed\n");
+	printf("\nparsed\n");
 
 	parsetree.pop();
 }
@@ -601,8 +617,9 @@ void parser_t::Factor(){
             Expr();
 			if (scanner.next_token() == T_closeparen) {
                 eat_token(T_closeparen);
-            } else { syntax_error(NT_Factor); } 
-			
+            } else { 
+				syntax_error(NT_Factor); 
+			} 
             break;
         case T_bar: 
             eat_token(T_bar);
@@ -610,7 +627,6 @@ void parser_t::Factor(){
 			if (scanner.next_token() == T_bar) {
                 eat_token(T_bar);
             } else { syntax_error(NT_Factor); } 
-			
             break;
 		default: 
 			syntax_error(NT_Factor);
